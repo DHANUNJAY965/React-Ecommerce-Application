@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+.bg-req{
+
+  background-image: url("./Sections/Body/shopping3_cleanup.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+
+  background-size: cover;
+  object-fit: contain;
+
+}
+.hell
+{
+  color: rgb(11, 90, 129);
+}
+.h1tag
+{
+  color: rgba(72, 97, 28, 0.904)
+}
