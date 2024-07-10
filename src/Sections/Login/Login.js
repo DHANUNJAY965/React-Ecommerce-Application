@@ -1,4 +1,5 @@
 import React from 'react'
+<<<<<<< HEAD
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -36,6 +37,11 @@ const Login = () => {
       };
   return (
     <>
+=======
+
+const Login = ({onclickme}) => {
+  return (
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
     <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl mt-44">
     <div className="hidden  lg:block lg:w-1/2 bg-contain" style={{ backgroundImage: 'url("https://i.postimg.cc/BZRNJ5tQ/Pngtree-shopping-on-mobile-5354478.png")' }}></div>
 
@@ -43,6 +49,7 @@ const Login = () => {
        
 
         <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">
+<<<<<<< HEAD
          ADMIN REACT STORE
         </p>
 
@@ -52,6 +59,20 @@ const Login = () => {
             <input id="LoggingEmailAddress" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="email" onChange={(e)=>{
                 setEmail(e.target.value);
             }}/>
+=======
+           REACT STORE
+        </p>
+
+        
+
+        <div className="flex items-center justify-between mt-4">
+            
+        </div>
+
+        <div className="mt-4">
+            <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="LoggingEmailAddress">Email Address</label>
+            <input id="LoggingEmailAddress" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="email" />
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
         </div>
 
         <div className="mt-4">
@@ -60,6 +81,7 @@ const Login = () => {
                 
             </div>
 
+<<<<<<< HEAD
             <input id="loggingPassword" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" onChange={(e)=>{
                 setPassword(e.target.value);
             }}/>
@@ -73,11 +95,23 @@ const Login = () => {
         <div className='flex justify-center text-white underline' onClick={()=>{
             navi("/AdminSingup");
         }}>New User ? Signup</div>
+=======
+            <input id="loggingPassword" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" />
+        </div>
+
+        <div onClick={onclickme} className="mt-6">
+            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+                Sign In / Sing Up
+            </button>
+        </div>
+
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
         <div className="flex items-center justify-between mt-4">
             
         </div>
     </div>
 </div>
+<<<<<<< HEAD
 {showToast && 
         <div
           id="toast-success"
@@ -127,6 +161,8 @@ const Login = () => {
           </div>
         </div>}
     </>
+=======
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
   )
 }
 

@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "@heroicons/react": "^2.1.4",
     "@material-tailwind/react": "^2.1.9",
+=======
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
     "@reduxjs/toolkit": "^2.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.2",
+<<<<<<< HEAD
     "cloudinary": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -17,6 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "material-react-table": "^2.13.0",
     "mongoose": "^8.4.5",
+=======
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",

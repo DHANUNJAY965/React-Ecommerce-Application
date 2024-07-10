@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link ,} from "react-router-dom";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 const Header = ({updatecart,serachhere,setserachhere}) => {
   const navi=useNavigate()
+=======
+
+const Header = ({onLoginClick,updatecart,serachhere,setserachhere}) => {
+
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
  const handleclickhere=(e)=>
  {
   setserachhere(e.target.value)
@@ -34,10 +40,14 @@ const Header = ({updatecart,serachhere,setserachhere}) => {
     </div>
     <div className="userandcart grid grid-cols-3 items-center">
     <Link to="/" className="mr-4">Home</Link>
+<<<<<<< HEAD
       <div onClick={()=>
         {
             navi("/AdminLogin");
         }} className="user cursor-pointer">
+=======
+      <div onClick={onLoginClick} className="user cursor-pointer">
+>>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
         
           <svg
             className="inline"
