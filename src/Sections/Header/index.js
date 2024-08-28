@@ -21,7 +21,7 @@ const Header = ({onLoginClick,updatecart,serachhere,setserachhere}) => {
       <span className="ml-3 text-x flex">
         Ecomm
         <a href="#/">
-          <h2 className="font-bold pl-1 text-lg text-red-600"> REACT</h2>
+          <h2 className="font-bold pl-1 text-lg text-red-600"> Trendify</h2>
         </a>
       </span>
     </a>
