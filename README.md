@@ -5,19 +5,19 @@ A full-stack e-commerce web application built with React.js frontend and Node.js
 ## 📸 Application Screenshots
 
 ### All Products Page
-![All Products Page](./screenshots/all-products-page.png)
+![All Products Page](./public/screenshots/all-products-page.png)
 *Browse and search through all available products with category filtering*
 
 ### Single Product Page
-![Single Product Page](./screenshots/single-product-page.png)
+![Single Product Page](./public/screenshots/single-product-page.png)
 *Detailed product view with image gallery and add to cart functionality*
 
 ### Admin Panel
-![Admin Panel](./screenshots/admin-panel.png)
+![Admin Panel](./public/screenshots/admin-panel.png)
 *Admin dashboard for managing products with full CRUD operations*
 
 ### Product Adding in Admin
-![Product Adding in Admin](./screenshots/product-adding-admin.png)
+![Product Adding in Admin](./public/screenshots/product-adding-admin.png)
 *Admin interface for adding new products with image upload and category selection*
 
 ## 🚀 Features
