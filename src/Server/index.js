@@ -15,8 +15,8 @@ app.use(fileupload({
     useTempFiles: true,
     tempFileDir: "/tmp/"
 }));
- dbconnect();
-      cloudinaryDb();
+dbconnect();
+cloudinaryDb();
 app.use("/api/v1", router);
 
 

@@ -10,9 +10,10 @@ const validatedetails = zod.object({
 });
 
 const uploadtodb = async (req, res) => {
-  const { title, price, description, category } = req.body;
+  const { title, price, description, category,FuturingImage } = req.body;
+  const parsedimage=Number.parseInt(FuturingImage);
   const parsedPrice = parseFloat(price);
-  console.log("here are the details : ", title, price, description, category);
+  console.log("here are the details : ", title, price, description, category,parsedimage);
 
   const validation = validatedetails.safeParse({ title, category, price:parsedPrice, description });
 
@@ -28,6 +29,7 @@ const uploadtodb = async (req, res) => {
       description,
       category,
       ImageUrl: req.Imageurl,
+      FuturingImage:parsedimage
     });
 
     // console.log("here is the data inserted : ", response);

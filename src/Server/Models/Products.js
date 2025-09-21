@@ -17,10 +17,22 @@ const product=new mongoose.Schema({
         type: String,
         required: true
     },
-    ImageUrl:{
-        type: String,
-        required: true
-    }
+    ImageUrl: 
+ {
+    type: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    required: true,
+  },
+  FuturingImage:{
+    type:Number,
+    required: true
+  }
 
 })
 

@@ -11,50 +11,68 @@ const signupvalidate = zod.object({
 
 const Signup = async (req, res) => {
   const { Email, username, password } = req.body;
-  const valide = signupvalidate.safeParse({ Email, username, password });
 
-  // console.log("validate : ", valide);
-  if (!valide.success) {
+  // Validate the inputs
+  const validateResult = signupvalidate.safeParse({ Email, username, password });
+  if (!validateResult.success) {
     return res.status(400).json({
-      message: "Incorrect inputs",
+      message: "Invalid input data",
       success: false,
+      errors: validateResult.error.errors, // Send detailed validation errors
     });
   }
 
   try {
-   
+    // Check if the email is already registered
+    const existingUser = await AdminModel.findOne({ Email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is already registered",
+      });
+    }
 
-    const useresponse = await AdminModel.create({
+    // Create a new user
+    const userResponse = await AdminModel.create({
       Email,
       password,
       username,
     });
 
-    // console.log("usererspoe : ", useresponse);
-
     // Save the user document to the database
-    await useresponse.save();
+    await userResponse.save();
 
-    const userid = useresponse._id;
+    const userId = userResponse._id;
 
+    // Check if JWT Secret is defined
+    if (!Secret) {
+      return res.status(500).json({
+        success: false,
+        message: "Server configuration error: JWT secret is missing",
+      });
+    }
+
+    // Sign the JWT token
     const token = jwt.sign(
       {
-        userid,
+        userId,
       },
-      Secret
+      Secret,
+      
     );
 
-    res.json({
-      message: "Registered Successfully",
+    // Send the success response with the token
+    return res.status(201).json({
+      message: "Registered successfully",
       token: token,
       success: true,
     });
   } catch (err) {
-    console.log("error : ", err);
+    console.error("Server error: ", err);
     return res.status(500).json({
       success: false,
-      message: "Something went wrong with server please try again later",
-      Error: err.message,
+      message: "Something went wrong with the server, please try again later",
+      error: err.message,
     });
   }
 };

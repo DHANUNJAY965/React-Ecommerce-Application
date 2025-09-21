@@ -13,7 +13,7 @@ const AdminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minLength: 6,
+    minLength: 1,
   },
   username:{
     type: String,

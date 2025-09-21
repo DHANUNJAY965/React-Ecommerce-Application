@@ -38,9 +38,6 @@ const updateproduct = async (req, res) => {
       description,
       category,
     };
-    if (req.Imageurl) {
-      update.ImageUrl = req.Imageurl;
-    }
     const product = await Product.findByIdAndUpdate(id, update, { new: true });
     if (!product) {
       return res.status(404).json({
