@@ -1,5 +1,4 @@
 import React from 'react'
-<<<<<<< HEAD
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -10,7 +9,18 @@ const Login = () => {
     const navi=useNavigate()
     const [Email,setEmail]=useState("");
     const [password,setPassword]=useState("");
+    const[loading,setloading]=useState(false);
     const handlelogin = async () => {
+      if(Email.length<2 || password.length<2)
+      {
+        setToastMessage("Please Enter All the details");
+          setShowToast(true);
+          setTimeout(() => {
+            setShowToast(false);
+          }, 3000);
+          setloading(false);
+          return;
+      }
         const response = await axios.post(
           "https://ecomm-react-server.vercel.app/api/v1/Admin/signin",
           {
@@ -20,10 +30,10 @@ const Login = () => {
              },
           }
         );
-        console.log("Email and password : ",Email,password);
         console.log(" response :", response.data);
           setToastMessage(response.data.message);
           setShowToast(true);
+          setloading(false);
           if(response.data.success)
           {
             localStorage.setItem("token", response.data.token);
@@ -37,19 +47,17 @@ const Login = () => {
       };
   return (
     <>
-=======
-
-const Login = ({onclickme}) => {
-  return (
->>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
-    <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl mt-44">
+    {
+      loading ?(<div> <div className="flex justify-center items-center h-screen">
+        <div className="w-16 h-16 border-t-4 border-indigo-500 border-solid rounded-full animate-spin"></div>
+      </div></div>):(<>
+        <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl mt-44">
     <div className="hidden  lg:block lg:w-1/2 bg-contain" style={{ backgroundImage: 'url("https://i.postimg.cc/BZRNJ5tQ/Pngtree-shopping-on-mobile-5354478.png")' }}></div>
 
     <div className="w-full px-6 py-8 md:px-8 lg:w-1/2"> 
        
 
         <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">
-<<<<<<< HEAD
          ADMIN REACT STORE
         </p>
 
@@ -59,20 +67,6 @@ const Login = ({onclickme}) => {
             <input id="LoggingEmailAddress" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="email" onChange={(e)=>{
                 setEmail(e.target.value);
             }}/>
-=======
-           REACT STORE
-        </p>
-
-        
-
-        <div className="flex items-center justify-between mt-4">
-            
-        </div>
-
-        <div className="mt-4">
-            <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="LoggingEmailAddress">Email Address</label>
-            <input id="LoggingEmailAddress" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="email" />
->>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
         </div>
 
         <div className="mt-4">
@@ -81,37 +75,32 @@ const Login = ({onclickme}) => {
                 
             </div>
 
-<<<<<<< HEAD
             <input id="loggingPassword" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" onChange={(e)=>{
                 setPassword(e.target.value);
             }}/>
         </div>
 
         <div  className="mt-6">
-            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50" onClick={handlelogin}>
+            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50" onClick={()=>{
+              setloading(true);
+              handlelogin();
+            }
+            }>
                 Signin
             </button>
         </div>
         <div className='flex justify-center text-white underline' onClick={()=>{
             navi("/AdminSingup");
         }}>New User ? Signup</div>
-=======
-            <input id="loggingPassword" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" />
-        </div>
-
-        <div onClick={onclickme} className="mt-6">
-            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
-                Sign In / Sing Up
-            </button>
-        </div>
-
->>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
         <div className="flex items-center justify-between mt-4">
             
         </div>
     </div>
 </div>
-<<<<<<< HEAD
+
+      </>)
+    }
+    
 {showToast && 
         <div
           id="toast-success"
@@ -161,8 +150,6 @@ const Login = ({onclickme}) => {
           </div>
         </div>}
     </>
-=======
->>>>>>> 97e08fc3832e3392e5f62641c83d58aee48b93ff
   )
 }
 

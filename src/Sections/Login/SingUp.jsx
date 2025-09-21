@@ -10,8 +10,19 @@ const Signup = () => {
    const [username,setUsername]=useState("");
    const [showToast, setShowToast] = useState(false);
    const [Toast, setToastMessage] = useState("");
+   const [Loading,setLoading]=useState(false);
    const handlesignup = async () => {
     try {
+      if(Email.length<2 || password.length<2 || username.length<2)
+        {
+          setToastMessage("Please Enter All the details");
+            setShowToast(true);
+            setTimeout(() => {
+              setShowToast(false);
+            }, 3000);
+            setLoading(false);
+            return;
+        }
       const response = await axios.post(
         "https://ecomm-react-server.vercel.app/api/v1/Admin/signup",
         {
@@ -25,30 +36,47 @@ const Signup = () => {
           }
         }
       );
-      console.log("Email and password: ", Email, password);
       console.log("Response: ", response.data);
-      setToastMessage(response.data.message);
-      setShowToast(true);
-      if (response.data.success) {
-        localStorage.setItem("token", response.data.token);
-        navi("/Adminpanel");
+      if(response.data.message)
+      {
+        setToastMessage(response.data.message);
+        setShowToast(true);
+        setLoading(false);
+        if (response.data.success) {
+          localStorage.setItem("token", response.data.token);
+          navi("/Adminpanel");
+        }
+        return;
       }
-      setTimeout(() => {
-        setShowToast(false);
-      }, 2500);
+      else
+      {
+        setToastMessage("Enter details correctly");
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 2500);
+        setLoading(false);
+        return;
+      }
+     
     } catch (error) {
       console.error("Error:", error);
-      setToastMessage("An error occurred");
+      setToastMessage("Enter the details correctly ");
       setShowToast(true);
+      setLoading(false);
       setTimeout(() => {
         setShowToast(false);
       }, 2500);
+      return;
     }
   };
   
   return (
     <>
-    <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl mt-44">
+    {
+      Loading ? (<div> <div className="flex justify-center items-center h-screen">
+        <div className="w-16 h-16 border-t-4 border-indigo-500 border-solid rounded-full animate-spin"></div>
+      </div></div>):(<div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl mt-44">
     <div className="hidden  lg:block lg:w-1/2 bg-contain" style={{ backgroundImage: 'url("https://i.postimg.cc/BZRNJ5tQ/Pngtree-shopping-on-mobile-5354478.png")' }}></div>
 
     <div className="w-full px-6 py-8 md:px-8 lg:w-1/2"> 
@@ -82,7 +110,10 @@ const Signup = () => {
         </div>
 
         <div  className="mt-6">
-            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50" onClick={handlesignup}>
+            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50" onClick={()=>{
+              setLoading(true);
+              handlesignup()}
+              }>
                 Signup
             </button>
         </div>
@@ -93,7 +124,9 @@ const Signup = () => {
             
         </div>
     </div>
-</div>
+</div>)
+    }
+    
 {showToast && 
         <div
           id="toast-success"
