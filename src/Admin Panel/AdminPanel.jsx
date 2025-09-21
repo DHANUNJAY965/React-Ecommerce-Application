@@ -1,8 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  MaterialReactTable,
-  useMaterialReactTable,
-} from "material-react-table";
+import React, { useEffect, useState } from "react";
+import { MaterialReactTable } from "material-react-table";
 import axios from "axios";
 import {
   Dialog,
@@ -17,8 +14,16 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+// Categories for the dropdown
+const categories = [
+  "MEN'S CLOTHING",
+  "JEWELRY",
+  "ELECTRONICS",
+  "WOMEN'S CLOTHING",
+];
+
 const Example = () => {
-  const navi=useNavigate()
+  const navi = useNavigate();
   const [data, setData] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [newProduct, setNewProduct] = useState({
@@ -26,12 +31,28 @@ const Example = () => {
     price: "",
     description: "",
     category: "",
-    ImageFile: "",
+    size: 0,
+    ImageFile: [],
+    imageNames: [], // New state to store image names
+    FuturingImage: null,
   });
+ const[Loading,setLoading]=useState(true);
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    const fileNames = selectedFiles.map((file) => file.name); // Get image names
+
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      ImageFile: [...prevProduct.ImageFile, ...selectedFiles],
+      imageNames: [...prevProduct.imageNames, ...fileNames], // Store image names
+    }));
+  };
+
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [Toast, setToastMessage] = useState("");
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -39,6 +60,8 @@ const Example = () => {
           "https://ecomm-react-server.vercel.app/api/v1/products"
         );
         setData(response.data.products);
+        setLoading(false);
+
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -53,25 +76,23 @@ const Example = () => {
   };
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      // console.error("No token found in localStorage");
       return;
     }
-  
+
     try {
       const response = await axios.delete(
         "https://ecomm-react-server.vercel.app/api/v1/product/delete",
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           data: { _id: id },
         }
       );
-      
-      // console.log("Deleted response:", response.data);
+
       setToastMessage(response.data.message);
       setShowToast(true);
       setTimeout(() => {
@@ -85,7 +106,6 @@ const Example = () => {
       }
     }
   };
-  
 
   const handleSave = async () => {
     try {
@@ -108,12 +128,11 @@ const Example = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: "Bearer "+localStorage.getItem('token'),
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
 
-      // console.log("Here is the updated data from response:", response.data);
       setToastMessage(response.data.message);
       setShowToast(true);
       setTimeout(() => {
@@ -127,31 +146,31 @@ const Example = () => {
   };
 
   const handleAdd = async () => {
-   
     if (
       newProduct.title.length < 1 ||
       newProduct.ImageFile.length < 1 ||
       newProduct.price.length < 1 ||
       newProduct.category.length < 1 ||
-      newProduct.description.length < 1
+      newProduct.description.length < 1 ||
+      newProduct.size < 0 ||
+      newProduct.FuturingImage === null
     ) {
-      alert("fill all the details ");
-      // setNewProduct({
-      //   title: "",
-      //   price: "",
-      //   description: "",
-      //   category: "",
-      //   ImageFile: "",
-      // });
+      alert("Please fill all the details.");
+      setLoading(false);
       return;
     }
+
     const formData = new FormData();
     formData.append("title", newProduct.title);
-    formData.append("ImageFile", newProduct.ImageFile);
+    newProduct.ImageFile.forEach((file, index) => {
+      formData.append(`ImageFile[${index}]`, file);
+    });
     formData.append("price", newProduct.price);
     formData.append("category", newProduct.category);
+    formData.append("size", newProduct.size);
     formData.append("description", newProduct.description);
-    // console.log("the new product before added is : ", newProduct);
+    formData.append("FuturingImage", newProduct.FuturingImage); // Pass the main image index
+
     try {
       const response = await axios.post(
         "https://ecomm-react-server.vercel.app/api/v1/UploadtoDb",
@@ -159,8 +178,7 @@ const Example = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: "Bearer "+localStorage.getItem('token'),
-             
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
@@ -168,97 +186,101 @@ const Example = () => {
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
-      }, 2500);
-
-      // console.log("Add new product:", newProduct);
+      }, 4000);
+     setLoading(false);
       setNewProduct({
         title: "",
         price: "",
         description: "",
         category: "",
-        ImageFile: "",
+        size: 0,
+        ImageFile: [],
+        imageNames: [], // Reset image names
+        FuturingImage: null,
       });
+      // Reset the main image index
       setIsAddDialogOpen(false);
     } catch (error) {
       console.error("Error adding product:", error);
     }
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "title",
-        header: "Title",
-        size: 150,
-      },
-      {
-        accessorKey: "price",
-        header: "Price",
-        size: 100,
-      },
-      {
-        accessorKey: "description",
-        header: "Description",
-        size: 200,
-        Cell: ({ cell }) => (
-          <div style={{ maxHeight: "50px", overflowY: "scroll" }}>
-            {cell.getValue()}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "category",
-        header: "Category",
-        size: 150,
-      },
-      {
-        accessorKey: "ImageUrl",
-        header: "Image",
-        size: 150,
-        Cell: ({ cell }) => (
+  const columns = [
+    {
+      accessorKey: "title",
+      header: "Title",
+      size: 150,
+    },
+    {
+      accessorKey: "price",
+      header: "Price",
+      size: 100,
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      size: 200,
+      Cell: ({ cell }) => (
+        <div style={{ maxHeight: "50px", overflowY: "scroll" }}>
+          {cell.getValue()}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "category",
+      header: "Category",
+      size: 150,
+    },
+
+    {
+      accessorKey: "ImageUrl",
+      header: "Image",
+      size: 150,
+      Cell: ({ row }) => {
+        // Get the image URL using the FuturingImage index
+        const featuredImageIndex = row.original.FuturingImage;
+        const imageUrl = row.original.ImageUrl[featuredImageIndex]?.url; // Assuming each image object has a 'url' field
+    
+        return (
           <img
-            src={cell.getValue()}
+            src={imageUrl}
             alt="Product"
             style={{ width: "50px", height: "50px" }}
           />
-        ),
+        );
       },
-      {
-        accessorKey: "edit",
-        header: "Edit",
-        Cell: ({ row }) => (
-          <Button variant="outlined" onClick={() => handleEdit(row)}>
-            Edit
-          </Button>
-        ),
-      },
-      {
-        accessorKey: "delete",
-        header: "Delete",
-        Cell: ({ row }) => (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              let id = row.original._id;
-              handleDelete(id);
-            }}
-          >
-            Delete
-          </Button>
-        ),
-      },
-    ],
-    []
-  );
-
-  const table = useMaterialReactTable({
-    columns,
-    data,
-  });
+    }
+,    
+    
+    {
+      accessorKey: "edit",
+      header: "Edit",
+      Cell: ({ row }) => (
+        <Button variant="outlined" onClick={() => handleEdit(row)}>
+          Edit
+        </Button>
+      ),
+    },
+    {
+      accessorKey: "delete",
+      header: "Delete",
+      Cell: ({ row }) => (
+        <Button
+          variant="outlined"
+          onClick={() => handleDelete(row.original._id)}
+        >
+          Delete
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <>
-      <Box sx={{ backgroundColor: "#f0f0f0", minHeight: "100vh" }}>
+    {
+      Loading ? (<div> <div className="flex justify-center items-center h-screen">
+        <div className="w-16 h-16 border-t-4 border-indigo-500 border-solid rounded-full animate-spin"></div>
+      </div></div>):(<Box sx={{ backgroundColor: "#f0f0f0", minHeight: "100vh" }}>
         <nav className="bg-gray-800 rounded-l-lg px-6 py-4 flex justify-between items-center">
           <h1 className="text-white text-xl font-bold">Ecom Admin Panel</h1>
           <div className="flex space-x-2">
@@ -268,23 +290,26 @@ const Example = () => {
             >
               Add Product
             </button>
-            <button className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-700" onClick={() => {
-              localStorage.removeItem("token");
-              setShowToast(true);
-              setToastMessage("Logged Out Successfully");
-              setTimeout(()=>{
-                setShowToast(false);
-              },3000);
-              setTimeout(()=>{
-                navi("/");
-              },500)
-            }}>
+            <button
+              className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
+              onClick={() => {
+                localStorage.removeItem("token");
+                setShowToast(true);
+                setToastMessage("Logged Out Successfully");
+                setTimeout(() => {
+                  setShowToast(false);
+                }, 3000);
+                setTimeout(() => {
+                  navi("/");
+                }, 500);
+              }}
+            >
               Logout
             </button>
           </div>
         </nav>
         <Box sx={{ padding: 2 }}>
-          <MaterialReactTable table={table} />
+          <MaterialReactTable columns={columns} data={data} />
         </Box>
         <Dialog
           open={isEditDialogOpen}
@@ -293,71 +318,56 @@ const Example = () => {
           <DialogTitle>Edit Product</DialogTitle>
           <DialogContent>
             <TextField
-              margin="dense"
               label="Title"
-              type="text"
-              fullWidth
               value={editingRow?.title || ""}
               onChange={(e) =>
                 setEditingRow({ ...editingRow, title: e.target.value })
               }
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Price"
-              type="number"
-              fullWidth
               value={editingRow?.price || ""}
               onChange={(e) =>
                 setEditingRow({ ...editingRow, price: e.target.value })
               }
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Description"
-              type="text"
-              fullWidth
-              multiline
-              rows={4}
               value={editingRow?.description || ""}
               onChange={(e) =>
                 setEditingRow({ ...editingRow, description: e.target.value })
               }
-            />
-
-            <Select
-              margin="dense"
-              label="Category"
               fullWidth
+              margin="normal"
+              multiline
+            />
+            <TextField
+              label="Category"
               value={editingRow?.category || ""}
               onChange={(e) =>
                 setEditingRow({ ...editingRow, category: e.target.value })
               }
-              displayEmpty
-            >
-              <MenuItem value="" disabled>
-                Select a Category
-              </MenuItem>
-              <MenuItem value="MEN'S CLOTHING">MEN'S CLOTHING</MenuItem>
-              <MenuItem value="JEWELERY">JEWELERY</MenuItem>
-              <MenuItem value="ELECTRONICS">ELECTRONICS</MenuItem>
-              <MenuItem value="WOMEN'S CLOTHING">WOMEN'S CLOTHING</MenuItem>
-            </Select>
-            <TextField
-              margin="dense"
-              type="file"
               fullWidth
-              onChange={(e) =>
-                setEditingRow({
-                  ...editingRow,
-                  ImageUrl: e.target.files[0],
-                })
-              }
-            />
+              margin="normal"
+              select
+            >
+              {categories.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </TextField>
+            
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave} color="primary">
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
         <Dialog
@@ -367,37 +377,34 @@ const Example = () => {
           <DialogTitle>Add Product</DialogTitle>
           <DialogContent>
             <TextField
-              margin="dense"
               label="Title"
-              type="text"
-              fullWidth
               value={newProduct.title}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, title: e.target.value })
               }
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Price"
-              type="number"
-              fullWidth
               value={newProduct.price}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, price: e.target.value })
               }
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Description"
-              type="text"
-              fullWidth
-              multiline
-              rows={4}
               value={newProduct.description}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, description: e.target.value })
               }
+              fullWidth
+              margin="normal"
+              multiline
             />
+
             <Select
               margin="dense"
               label="Category"
@@ -411,27 +418,68 @@ const Example = () => {
               <MenuItem value="" disabled>
                 Select a Category
               </MenuItem>
-              <MenuItem value="MEN'S CLOTHING">MEN'S CLOTHING</MenuItem>
-              <MenuItem value="JEWELERY">JEWELERY</MenuItem>
-              <MenuItem value="ELECTRONICS">ELECTRONICS</MenuItem>
-              <MenuItem value="WOMEN'S CLOTHING">WOMEN'S CLOTHING</MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
             </Select>
-
             <TextField
-              margin="dense"
-              type="file"
-              fullWidth
+              label="Size"
+              value={newProduct.size}
               onChange={(e) =>
-                setNewProduct({ ...newProduct, ImageFile: e.target.files[0] })
+                setNewProduct({ ...newProduct, size: e.target.value })
               }
+              fullWidth
+              margin="normal"
+              type="number"
             />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              multiple
+            />
+            <Select
+              margin="dense"
+              label="Main Image"
+              fullWidth
+              value={
+                newProduct.FuturingImage !== null
+                  ? newProduct.FuturingImage
+                  : ""
+              }
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, FuturingImage: e.target.value })
+              }
+              displayEmpty
+              className=" my-2"
+            >
+              <MenuItem value="" disabled>
+                Select a Main Image
+              </MenuItem>
+              {newProduct.imageNames.map((imageName, index) => (
+                <MenuItem key={index} value={index}>
+                  {imageName}
+                </MenuItem>
+              ))}
+            </Select>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleAdd}>Add</Button>
+            <Button onClick={()=>{
+              setLoading(true);
+              handleAdd();
+            }
+              } color="primary">
+              Add
+            </Button>
           </DialogActions>
         </Dialog>
-      </Box>
+        
+      </Box>)
+    }
+      
       {showToast ? (
         <div
           id="toast-success"

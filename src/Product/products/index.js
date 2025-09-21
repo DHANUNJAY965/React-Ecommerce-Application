@@ -25,7 +25,7 @@ const Home = ({changer}) => {
             {
                 const response = await fetch('https://ecomm-react-server.vercel.app/api/v1/products')
                 const data = await response.json()
-                console.log("here is the data :",data.products)
+                
                 setProducts(data.products)
             }
             fetchproducts()

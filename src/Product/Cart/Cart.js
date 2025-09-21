@@ -43,7 +43,7 @@ const Cart = ({ setCartins }) => {
                   <div className="flex items-center py-4 px-6">
                     <img
                       className="w-16 h-16  object-contain rounded"
-                      src={cart.ImageUrl}
+                      src={cart.ImageUrl[cart.FuturingImage].url}
                       alt="Product Image"
                     />
                     <div className="ml-3">
