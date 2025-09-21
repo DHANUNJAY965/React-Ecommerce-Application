@@ -7,13 +7,14 @@ const signupvalidate = zod.object({
   Email: zod.string().email(),
   username: zod.string(),
   password: zod.string(),
+  role: zod.enum(['admin', 'user']).optional(),
 });
 
 const Signup = async (req, res) => {
-  const { Email, username, password } = req.body;
+  const { Email, username, password, role = 'user' } = req.body;
 
   // Validate the inputs
-  const validateResult = signupvalidate.safeParse({ Email, username, password });
+  const validateResult = signupvalidate.safeParse({ Email, username, password, role });
   if (!validateResult.success) {
     return res.status(400).json({
       message: "Invalid input data",
@@ -37,6 +38,7 @@ const Signup = async (req, res) => {
       Email,
       password,
       username,
+      role,
     });
 
     // Save the user document to the database
@@ -55,7 +57,7 @@ const Signup = async (req, res) => {
     // Sign the JWT token
     const token = jwt.sign(
       {
-        userId,
+        userid: userId,
       },
       Secret,
       

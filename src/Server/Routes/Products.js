@@ -4,7 +4,7 @@ const products=async (req,res)=>{
 
     try{
        const response=await produc.find({});
-       console.log("response is : ",response);
+      //  console.log("response is : ",response);
       return res.json({products:response});
     }
     catch(err){

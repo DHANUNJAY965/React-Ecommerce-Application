@@ -14,7 +14,7 @@ const Singprod = ({ cartin, setCartin }) => {
         `https://ecomm-react-server.vercel.app/api/v1/products/${_id}`
       );
       const data = await response.json();
-      console.log("the data is : ", data);
+      // console.log("the data is : ", data);
       setProduct(data.product);
       setSelectedImageIndex(data.product.FuturingImage || 0);
     };
@@ -22,7 +22,7 @@ const Singprod = ({ cartin, setCartin }) => {
   }, [_id]);
 
   const handleclick = (product) => {
-    console.log(product);
+    // console.log(product);
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const isproduct = cart.find((item) => item._id === product._id);
     if (isproduct) {
@@ -43,14 +43,14 @@ const Singprod = ({ cartin, setCartin }) => {
       );
     }
     alert("Hey product added to cart");
-    console.log("length : ", cart.length);
+    // console.log("length : ", cart.length);
     setCartin(cart.length + 1);
 
-    console.log("this is actual length : " + cartin);
+    // console.log("this is actual length : " + cartin);
   };
 
   useEffect(() => {
-    console.log("Updated length after state update: " + cartin);
+    // console.log("Updated length after state update: " + cartin);
   }, [cartin, setCartin]);
 
   const nextImage = () => {

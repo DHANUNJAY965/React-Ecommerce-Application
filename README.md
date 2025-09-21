@@ -20,22 +20,53 @@ A full-stack e-commerce web application built with React.js frontend and Node.js
 ![Product Adding in Admin](./public/screenshots/product-adding-admin.png)
 *Admin interface for adding new products with image upload and category selection*
 
+### Orders Management Page
+![Orders Management Page](./public/screenshots/orders-management-page.png)
+*Admin interface for viewing and managing customer orders with detailed order information*
+
+## ✨ New Features (Latest Update)
+
+### Role-Based Authentication System
+- **Dual User Types**: Users can register as either Admin or User
+- **Smart Routing**: Automatic redirection based on user role after login
+- **Unified Login**: Single login page for both admin and user accounts
+- **Role Selection**: Dropdown in signup to choose user type
+
+### Order Management System
+- **Secure Checkout**: Users must be logged in to place orders
+- **Order Creation**: Complete order details with product and user information
+- **Admin Order View**: Comprehensive order management interface
+- **Order Tracking**: Status-based order management system
+- **Customer Data**: Complete order information with user details
+
+### Enhanced User Experience
+- **Login Requirements**: Clear messaging when checkout requires authentication
+- **Toast Notifications**: Success/error messages for all user actions
+- **User Information Display**: Shows logged-in user details in header
+- **Cart Management**: Improved cart functionality with order placement
+
 ## 🚀 Features
 
 ### Customer Features
 - **Product Catalog**: Browse products with category filtering and search functionality
 - **Product Details**: View detailed product information with images
 - **Shopping Cart**: Add/remove products with real-time cart updates
+- **Order Placement**: Secure checkout with order confirmation
+- **User Authentication**: Login/signup with role-based access
 - **Search**: Search products by title, description, or category
 - **Responsive Design**: Mobile-friendly interface built with Tailwind CSS
 
 ### Admin Features
-- **Admin Authentication**: Secure login/signup system with JWT tokens
+- **Role-Based Authentication**: Secure login/signup system with JWT tokens and user roles
 - **Product Management**: 
   - Add new products with image upload
   - Edit existing products
   - Delete products
   - View all products in a data table
+- **Order Management**: 
+  - View all customer orders
+  - Track order status and details
+  - Customer information management
 - **Image Upload**: Cloudinary integration for product images
 - **Admin Panel**: Modern UI with Material-UI components
 
@@ -68,26 +99,47 @@ A full-stack e-commerce web application built with React.js frontend and Node.js
 React-Ecommerce-Application/
 ├── src/
 │   ├── Admin Panel/           # Admin dashboard components
-│   │   └── AdminPanel.jsx
+│   │   ├── AdminPanel.jsx     # Product management interface
+│   │   └── AdminOrders.jsx    # Orders management interface
 │   ├── Product/               # Product-related components
 │   │   ├── Cart/             # Shopping cart functionality
+│   │   │   └── Cart.js       # Cart component with checkout
 │   │   ├── products/         # Product listing
+│   │   │   └── index.js      # Product catalog component
 │   │   └── Singprod/         # Single product view
+│   │       └── index.js      # Product detail component
 │   ├── Sections/             # UI sections
 │   │   ├── Body/             # Homepage body
 │   │   ├── Footer/           # Site footer
-│   │   ├── Header/           # Navigation header
+│   │   ├── Header/           # Navigation header with auth
 │   │   ├── Login/            # Authentication components
+│   │   │   ├── Login.js      # Login component
+│   │   │   └── SingUp.jsx    # Signup component with roles
 │   │   ├── Prodsec/          # Product section
 │   │   └── WebsiDescrip/     # Website description
 │   ├── Server/               # Backend server
 │   │   ├── Database/         # Database configuration
+│   │   │   ├── DB.js         # MongoDB connection
+│   │   │   └── CloudinaryDb.js # Cloudinary setup
 │   │   ├── MiddleWares/      # Authentication & file upload
+│   │   │   ├── AuthMiddleware.js # JWT authentication
+│   │   │   └── ImageUpload.js    # File upload handling
 │   │   ├── Models/           # Database models
-│   │   └── Routes/           # API endpoints
+│   │   │   ├── AdminModel.js # User/Admin model with roles
+│   │   │   ├── Products.js   # Product model
+│   │   │   └── OrderModel.js # Order model
+│   │   ├── Routes/           # API endpoints
+│   │   │   ├── index.js      # Main router
+│   │   │   ├── Products.js   # Product CRUD operations
+│   │   │   ├── Orders.js     # Order management
+│   │   │   ├── Signin.js     # User authentication
+│   │   │   ├── Signup.js     # User registration
+│   │   │   └── UploadtoDb.js # Product creation
+│   │   └── index.js          # Server entry point
 │   ├── App.js                # Main application component
 │   └── index.js              # Application entry point
 ├── public/                   # Static assets
+│   └── screenshots/          # Application screenshots
 └── package.json              # Frontend dependencies
 ```
 
@@ -199,8 +251,13 @@ concurrently "cd src/Server && node index.js" "npm start"
 - `DELETE /api/v1/product/delete` - Delete product (Admin only)
 
 ### Authentication Endpoints
-- `POST /api/v1/Admin/signin` - Admin login
-- `POST /api/v1/Admin/signup` - Admin registration
+- `POST /api/v1/Admin/signin` - User/Admin login with role-based response
+- `POST /api/v1/Admin/signup` - User/Admin registration with role selection
+
+### Order Management Endpoints
+- `POST /api/v1/orders` - Create new order (authenticated users)
+- `GET /api/v1/orders` - Get all orders (admin only)
+- `GET /api/v1/user/orders` - Get user's orders (authenticated users)
 
 ## 🗄️ Database Models
 
@@ -215,12 +272,33 @@ concurrently "cd src/Server && node index.js" "npm start"
 }
 ```
 
-### Admin Model
+### User/Admin Model
 ```javascript
 {
   Email: String (required, unique),
   password: String (required),
-  username: String (required)
+  username: String (required),
+  role: String (required, enum: ['admin', 'user'], default: 'user')
+}
+```
+
+### Order Model
+```javascript
+{
+  userId: ObjectId (ref: 'Admin', required),
+  products: [{
+    productId: String (required),
+    title: String (required),
+    price: Number (required),
+    quantity: Number (default: 1)
+  }],
+  totalAmount: Number (required),
+  userInfo: {
+    username: String (required),
+    email: String (required)
+  },
+  orderDate: Date (default: Date.now),
+  status: String (enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'], default: 'pending')
 }
 ```
 
@@ -229,32 +307,41 @@ concurrently "cd src/Server && node index.js" "npm start"
 ### Main Pages
 - **Home Page**: Product catalog with search and filtering
 - **Product Detail**: Individual product information
-- **Shopping Cart**: Cart management with total calculation
+- **Shopping Cart**: Cart management with checkout functionality
+- **Login/Signup**: User authentication with role selection
 - **Admin Panel**: Product management interface
+- **Orders Management**: Admin order tracking and management
 
 ### Key Features
 - Responsive design for all screen sizes
 - Real-time search functionality
 - Category-based product filtering
 - Shopping cart with local storage persistence
+- Secure checkout with order placement
+- Role-based authentication (Admin/User)
 - Image upload with Cloudinary integration
 - Toast notifications for user feedback
+- Order management and tracking
 
 ## 🔐 Authentication
 
-The application uses JWT (JSON Web Tokens) for admin authentication:
-- Secure login/signup system
-- Protected admin routes
-- Token-based session management
-- Automatic logout functionality
+The application uses JWT (JSON Web Tokens) for user authentication:
+- **Role-Based Access**: Users can sign up as Admin or User
+- **Secure Authentication**: JWT tokens for session management
+- **Protected Routes**: Admin-only routes for product/order management
+- **User Management**: Login/logout with user information display
+- **Automatic Routing**: Role-based redirection after login
 
-## 🛒 Shopping Cart
+## 🛒 Shopping Cart & Orders
 
 - Add/remove products from cart
 - Local storage persistence
 - Real-time cart count updates
 - Total price calculation
-- Checkout functionality (UI ready)
+- **Secure Checkout**: Order placement with user authentication
+- **Order Management**: Admin can view and track all orders
+- **Order Details**: Complete order information with customer data
+- **Status Tracking**: Order status management (pending, confirmed, shipped, delivered)
 
 ## 📱 Responsive Design
 
@@ -680,14 +767,16 @@ This project is licensed under the MIT License.
 
 ## 🔮 Future Enhancements
 
-- User authentication for customers
-- Payment gateway integration
-- Order management system
+- Payment gateway integration (PayPal, Stripe)
 - Product reviews and ratings
 - Wishlist functionality
-- Email notifications
+- Email notifications for orders
 - Advanced search filters
 - Product variants (size, color, etc.)
+- Inventory management
+- Customer order history
+- Order status updates via email
+- Advanced admin analytics dashboard
 
 ## 📞 Support
 

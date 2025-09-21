@@ -9,6 +9,7 @@ import Singprod from "../src/Product/Singprod/index";
 import Cart from "../src/Product/Cart/Cart";
 import Login from "./Sections/Login/Login";
 import AdminPanel from "../src/Admin Panel/AdminPanel";
+import AdminOrders from "../src/Admin Panel/AdminOrders";
 import Singup from "../src/Sections/Login/SingUp";
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
     console.log("Search filter updated in App.js:", searchfil);
   }, [searchfil]);
 
-  const hideHeaderAndFooterPaths = ["/Adminpanel", "/AdminLogin", "/AdminSingup"];
+  const hideHeaderAndFooterPaths = ["/Adminpanel", "/AdminOrders", "/Login", "/Signup"];
 
   const shouldHideHeaderAndFooter = hideHeaderAndFooterPaths.includes(location.pathname);
 
@@ -36,8 +37,9 @@ function App() {
         <Route path="/Singprod/:_id" element={<Singprod cartin={cartin} setCartin={setCartin} />} />
         <Route path="Cart" element={<Cart setCartins={setCartin} />} />
         <Route path="/Adminpanel" element={<AdminPanel />} />
-        <Route path="/AdminLogin" element={<Login />} />
-        <Route path="/AdminSingup" element={<Singup />} />
+        <Route path="/AdminOrders" element={<AdminOrders />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Signup" element={<Singup />} />
       </Routes>
       {!shouldHideHeaderAndFooter && <Footer />}
     </div>

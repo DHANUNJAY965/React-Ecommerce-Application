@@ -3,9 +3,34 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 const Header = ({ updatecart, serachhere, setserachhere }) => {
   const navi = useNavigate();
+  const [userInfo, setUserInfo] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("userInfo") || "null");
+    
+    if (token && user) {
+      setIsLoggedIn(true);
+      setUserInfo(user);
+    } else {
+      setIsLoggedIn(false);
+      setUserInfo(null);
+    }
+  }, []);
+
   const handleclickhere = (e) => {
     setserachhere(e.target.value);
-    console.log("here the searched word : ", serachhere);
+    // console.log("here the searched word : ", serachhere);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userInfo");
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    navi("/");
   };
   return (
     <header className="text-gray-600 body-font shadow-lg ">
@@ -35,29 +60,57 @@ const Header = ({ updatecart, serachhere, setserachhere }) => {
   <Link to="/" className="mx-8">
     Home
   </Link>
-  <div
-    onClick={() => {
-      navi("/AdminLogin");
-    }}
-    className="user cursor-pointer flex items-center mx-8"
-  >
-    <svg
-      className="inline"
-      stroke="currentColor"
-      fill="currentColor"
-      strokeWidth="0"
-      viewBox="0 0 448 512"
-      height="1em"
-      width="1em"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path>
-    </svg>
-    <div className="ml-2">
-      <div>Admin</div>
-      <div>Login</div>
+  {isLoggedIn ? (
+    <div className="flex items-center mx-8 space-x-4">
+      <div className="flex items-center">
+        <svg
+          className="inline mr-2"
+          stroke="currentColor"
+          fill="currentColor"
+          strokeWidth="0"
+          viewBox="0 0 448 512"
+          height="1em"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path>
+        </svg>
+        <div>
+          <div className="text-sm font-medium text-gray-900">{userInfo?.username}</div>
+          <div className="text-xs text-gray-500 capitalize">{userInfo?.role}</div>
+        </div>
+      </div>
+      <button
+        onClick={handleLogout}
+        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+      >
+        Logout
+      </button>
     </div>
-  </div>
+  ) : (
+    <div
+      onClick={() => {
+        navi("/Login");
+      }}
+      className="user cursor-pointer flex items-center mx-8"
+    >
+      <svg
+        className="inline"
+        stroke="currentColor"
+        fill="currentColor"
+        strokeWidth="0"
+        viewBox="0 0 448 512"
+        height="1em"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path>
+      </svg>
+      <div className="ml-2">
+        <div>Login</div>
+      </div>
+    </div>
+  )}
   <div className=" mx-8">
   <li className="font-sans list-none lg:ml-6 text-black hover:text-gray-700">
     <Link to={"/Cart"} role="button" className="relative flex items-center">

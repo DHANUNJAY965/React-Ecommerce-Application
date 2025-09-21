@@ -30,7 +30,7 @@ const Home = ({changer}) => {
             }
             fetchproducts()
         },[])
-        console.log( "here the products : ",products)
+        // console.log( "here the products : ",products)
 
      if(changer.length>0)
      {

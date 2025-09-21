@@ -77,7 +77,11 @@ const Login = () => {
 
       if (response.data.success && response.data.token) {
         localStorage.setItem("token", response.data.token);
-        setTimeout(() => navigate("/Adminpanel"), 1500);
+        localStorage.setItem("userRole", response.data.user.role);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+        // Route based on user role
+        const redirectPath = response.data.user.role === 'admin' ? "/Adminpanel" : "/";
+        setTimeout(() => navigate(redirectPath), 1500);
       }
 
     } catch (error) {
@@ -109,7 +113,7 @@ const Login = () => {
   }, [handleLogin, loading, isFormValid]);
 
   const navigateToSignup = useCallback(() => {
-    navigate("/AdminSingup");
+    navigate("/Signup");
   }, [navigate]);
 
   // Loading component
@@ -229,10 +233,10 @@ const Login = () => {
           <div className="w-full px-8 py-12 lg:w-1/2 lg:px-12">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-                Admin Sign In
+                Sign In
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Access your admin panel
+                Access your account
               </p>
             </div>
 

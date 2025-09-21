@@ -35,9 +35,15 @@ const signin= async (req, res) => {
       );
   
       res.json({
-        message: "Sigined Successfully",
+        message: "Signed Successfully",
         token: token,
-        success:true
+        success: true,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.Email,
+          role: user.role
+        }
       });
       return;
     }

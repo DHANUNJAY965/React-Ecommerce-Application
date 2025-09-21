@@ -189,7 +189,8 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    username: ""
+    username: "",
+    role: "user"
   });
   const [toast, setToast] = useState({
     show: false,
@@ -203,7 +204,8 @@ const Signup = () => {
   const isFormValid = useMemo(() => {
     return formData.email.length >= 2 && 
            formData.password.length >= 2 && 
-           formData.username.length >= 2;
+           formData.username.length >= 2 &&
+           formData.role.length >= 1;
   }, [formData]);
 
   // Optimized input handler
@@ -231,7 +233,8 @@ const Signup = () => {
       setFieldErrors({
         email: formData.email.length < 2 ? "Email is required" : null,
         username: formData.username.length < 2 ? "Username is required" : null,
-        password: formData.password.length < 2 ? "Password is required" : null
+        password: formData.password.length < 2 ? "Password is required" : null,
+        role: formData.role.length < 1 ? "Role is required" : null
       });
       showToast("Please fill in all fields correctly", "error");
       return;
@@ -246,7 +249,8 @@ const Signup = () => {
         {
           Email: formData.email,
           username: formData.username,
-          password: formData.password
+          password: formData.password,
+          role: formData.role
         },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -258,7 +262,15 @@ const Signup = () => {
         showToast(response.data.message || "Registration successful!", "success");
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
-          setTimeout(() => navigate("/Adminpanel"), 1500);
+          localStorage.setItem("userRole", formData.role);
+          localStorage.setItem("userInfo", JSON.stringify({
+            username: formData.username,
+            email: formData.email,
+            role: formData.role
+          }));
+          // Route based on role
+          const redirectPath = formData.role === 'admin' ? "/Adminpanel" : "/";
+          setTimeout(() => navigate(redirectPath), 1500);
         }
       } else {
         showToast(response.data.message || "Registration failed", "error");
@@ -484,6 +496,26 @@ const Signup = () => {
                 />
                 {fieldErrors.password && (
                   <p className="text-red-500 text-sm mt-1">{fieldErrors.password}</p>
+                )}
+              </div>
+
+              {/* Role Selection Field */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                  Role
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={handleInputChange('role')}
+                  className={`w-full px-4 py-3 text-gray-700 bg-gray-50 border-2 rounded-xl dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 focus:outline-none transition-all duration-200 ${
+                    fieldErrors.role ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : ''
+                  }`}
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+                {fieldErrors.role && (
+                  <p className="text-red-500 text-sm mt-1">{fieldErrors.role}</p>
                 )}
               </div>
 

@@ -291,9 +291,17 @@ const Example = () => {
               Add Product
             </button>
             <button
+              className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-700"
+              onClick={() => navi("/AdminOrders")}
+            >
+              View Orders
+            </button>
+            <button
               className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
               onClick={() => {
                 localStorage.removeItem("token");
+                localStorage.removeItem("userRole");
+                localStorage.removeItem("userInfo");
                 setShowToast(true);
                 setToastMessage("Logged Out Successfully");
                 setTimeout(() => {
